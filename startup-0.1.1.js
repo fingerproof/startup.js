@@ -1,5 +1,5 @@
 /*!
- * startup.js v0.1.0
+ * startup.js v0.1.1
  * Startup images made easy
  * https://github.com/sebastien-p/startup.js
  *
@@ -27,7 +27,7 @@
 
 		if (iDevice && qS && !qS.call(doc, "link[rel='" + atsi + "']")) {
 
-			// Build defaults: 'rsrc/img/startup[–tablet[-landscape]][@2x].png'
+			// Build defaults: 'rsrc/img/startup[-tablet[-landscape]][@2x].png'
 			opt = { path: "rsrc/img/" + startup, hd: "@2x", ext: "png", sep: "-" };
 			opt.phone = opt[orientations[0]] = opt.sd = "";
 			opt[orientations[1]] = orientations[1];
@@ -44,19 +44,21 @@
 			// Do not prepend 'opt.sep' if 'value' is an empty string
 			function addPart(value, index) { b[index | 0] += value && opt.sep + value }
 
-			if (iDevice[1] == "ad") {
+			if (iDevice[c = 1] == "ad") {
 
 				// 'd === "tablet"' here
 				addPart(opt[d]);
 
 				// Only get current device orientation
-				if (standalone) addPart(opt[orientations[Math.abs(w[orientation] % 180 / 90 | 0)]]);
+				for (d = standalone ? [orientations[w[orientation] / 90 & 1]] : (
 
-				// Get both orientations...
-				else for (a[1] = a[0].cloneNode(), b[1] = b[d = 0]; c = orientations[d]; addPart(opt[c], d++))
+					// Or get both orientations
+					a[c++] = a[0].cloneNode(), b[1] = b[0], orientations
 
-					// ...using some mediaqueries
-					a[d].media = "media screen and (" + orientation + ":" + c + ")"
+				); c--; addPart(opt[d[c]], c))
+
+					// Using some mediaqueries
+					a[c].media = "screen and (" + orientation + ":" + d[c] + ")"
 
 			} else addPart(opt.phone);
 
@@ -68,7 +70,7 @@
 			// 'fragment' if the 'insert' parameter is 'false'
 			// 'undefined' if failed or already found
 			// 'true' if none of the above
-			return insert === !1 ? c : !!doc.getElementsByTagName("head")[0][append](c)
+			return insert !== !1 ? !!doc.getElementsByTagName("head")[0][append](c) : c
 
 		}
 
