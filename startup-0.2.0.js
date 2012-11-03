@@ -1,5 +1,5 @@
 /*!
- * startup.js v0.2.0
+ * startup.js v0.2.1
  * Startup images made easy
  * https://github.com/sebastien-p/startup.js
  *
@@ -82,7 +82,7 @@
 			for (; link = links.pop(); fragment[appendChild](link))
 
 				link.rel  = appleTouchStartupImage,
-				link.href = paths.pop() + config[def] + "." + config.ext;
+				link.href = paths.pop() + config[definition] + "." + config.ext;
 
 			return insert !== !1 ?
 
