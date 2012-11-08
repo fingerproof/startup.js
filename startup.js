@@ -1,11 +1,11 @@
 /*!
- * startup.js v0.2.1
+ * startup.js v0.2.2
  * Startup images made easy
- * https://github.com/sebastien-p/startup.js
+ * https://github.com/fingerproof/startup.js
  *
- * Copyright © 2012 Sebastien P., fingerproof®
+ * Copyright © 2012 fingerproof®, Sebastien P.
  * Released under the MIT license
- * https://github.com/sebastien-p/startup.js/blob/master/license.txt
+ * https://github.com/fingerproof/startup.js/blob/master/license.txt
  */
 
 ;(function () {
@@ -20,7 +20,7 @@
 		orientation            = "orientation",
 		orientations           = ["portrait", "landscape"],
 		appleTouchStartupImage = "apple-touch-" + startup + "-image",
-		standalone             = module.standalone === !0,
+		standalone             = module.standalone,
 		definition             = window.devicePixelRatio > 1 ? "hd" : "sd",
 		iDevice                = /iP(hone|[ao]d)/i.exec(module.userAgent);
 
@@ -33,11 +33,10 @@
 
 		) {
 
-			// Build defaults: 'rsrc/img/startup([-tablet[-landscape]]|[-i5])[@2x]).png'
-			config                  = { path: "rsrc/img/" + startup, hd: "@2x", ext: "png", sep : "-" };
+			// Build defaults: 'rsrc/img/startup[-(tablet[-landscape]|tall)][@2x].png'
+			config                  = { path: "rsrc/img/" + startup, tall: "tall", hd: "@2x", ext: "png", sep : "-" };
 			config.phone            = config[orientations[0]] = config.sd = "";
 			config[link = "tablet"] = link;
-			config.tall             = "tall";
 			config[orientations[1]] = orientations[1];
 
 			if (typeof links == "object") for (paths in links) if (
@@ -55,13 +54,12 @@
 			function addPart(value, index) { paths[index | 0] += value && config.sep + value }
 
 			// iPads cases
-			if (iDevice[fragment = 1] == "ad") {
+			if (iDevice[fragment = 1] == "ad") for (
 
 				// 'link === "tablet"' here
-				addPart(config[link]);
-
+				addPart(config[link]),
 				// Only get current device orientation...
-				for (link = standalone ? [orientations[window[orientation] / 90 & 1]] : (
+				link = standalone ? [orientations[window[orientation] / 90 & 1]] : (
 
 					// ...or get both orientations...
 					links[fragment++] = links[0].cloneNode(),
@@ -71,15 +69,13 @@
 				); fragment--; addPart(config[link[fragment]], fragment))
 
 					// ...using some mediaqueries
-					links[fragment].media = "screen and (" + orientation + ":" + d[fragment] + ")"
+					links[fragment].media = "screen and (" + orientation + ":" + link[fragment] + ")"
 
 			// iPhones cases
-			} else addPart(config.phone), window.screen.height == 568 && addPart(config.tall);
-
-			fragment = document.createDocumentFragment();
+			else addPart(config.phone), window.screen.height == 568 && addPart(config.tall);
 
 			// Append every created 'link' tag to the 'fragment' after setting needed attributes
-			for (; link = links.pop(); fragment[appendChild](link))
+			for (fragment = document.createDocumentFragment(); link = links.pop(); fragment[appendChild](link))
 
 				link.rel  = appleTouchStartupImage,
 				link.href = paths.pop() + config[definition] + "." + config.ext;
